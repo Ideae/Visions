@@ -1,0 +1,21 @@
+imFruit = rgb2gray(im2double(imread('bowl-of-fruit.jpg')));
+sobelY = fspecial('sobel');
+sobelX = sobelY';
+sigma = 3;
+width = sigma*6+1;
+gauss = fspecial('gaussian', width, sigma);
+
+derivGaussY = imfilter(gauss, sobelY, 'conv');
+derivGaussX = imfilter(gauss, sobelX, 'conv');
+
+convdY = imfilter(imFruit, derivGaussY, 'conv');
+convdX = imfilter(imFruit, derivGaussX, 'conv');
+imshow(convdY,[]);
+pause;
+imshow(convdX,[]);
+pause;
+
+derivMag = sqrt(convdX.^2 + convdY.^2);
+imshow(derivMag,[]);
+
+deriv

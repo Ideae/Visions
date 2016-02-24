@@ -1,4 +1,4 @@
-function c = convolve( image, kernel )
+function c = q1_3( image, kernel )
 %CONVOLVE  a convolution function that takes in as input an arbitrary image and kernel
 
     [kernelh,kernelw] = size(kernel); 

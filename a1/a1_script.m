@@ -9,9 +9,22 @@ A = [
 0 0 0 0 0 0 0 0 0 0;
 0 0 0 0 0 0 0 0 0 0;
 ];
+fprintf('q1_1\n');
 q1_1();
-% pause;
+pause;
+fprintf('q1_2\n');
 q1_2();
-% pause;
-res = convolve(A,[1,0,-1]);
-printMatrix(res);
+pause;
+fprintf('q1_3\n');
+res_q1_3 = q1_3(A,[1,0,-1]);
+printMatrix(res_q1_3);
+pause;
+q1_4();
+pause;
+q1_5();
+pause;
+q2_1();
+
+
+
+
