@@ -1,4 +1,6 @@
-%run('C:\Users\MHDante\Desktop\vlfeat-0.9.20\toolbox\vl_setup')
+
+% run('C:\Users\ZackLapt\Documents\MATLAB\vlfeat-0.9.20-bin\vlfeat-0.9.20\toolbox\vl_setup')
+% run('C:\Users\MHDante\Desktop\vlfeat-0.9.20\toolbox\vl_setup')
 imgFullLeft = imread('parliament-left.jpg');
 imgFullRight = imread('parliament-right.jpg');
 % imgFullLeft = imresize(imgFullLeft, 0.25);
@@ -6,9 +8,9 @@ imgFullRight = imread('parliament-right.jpg');
 imgLeft = im2single(rgb2gray(imgFullLeft));
 imgRight = im2single(rgb2gray(imgFullRight));
 %imshow(imgLeft);
-[fLeft, dLeft] = vl_sift(imgLeft) ;
-[fRight, dRight] = vl_sift(imgRight) ;
-[matches, scores] = vl_ubcmatch(dLeft, dRight) ;
+% [fLeft, dLeft] = vl_sift(imgLeft) ;
+% [fRight, dRight] = vl_sift(imgRight) ;
+% [matches, scores] = vl_ubcmatch(dLeft, dRight) ;
 % matches = matches(:,1:q);
 matchnum = size(matches,2);
 bestX = [];
@@ -57,10 +59,10 @@ affineTransform = affine2d(I);
 
 % affineTransform = affine2d('affine', I);
 % [warpedRight, xdata, ydata] = imtransform(imgRight, affineTransform);
-RinLeft = imref2d(size(imgLeft));
-[warpedLeft, Rout] = imwarp(imgLeft,RinLeft, affineTransform);
-RinRight = imref2d(size(imgRight));
-[C, RC] = imfuse(imgRight,RinRight,warpedLeft,Rout, 'blend');
+RinLeft = imref2d(size(imgFullLeft));
+[warpedLeft, Rout] = imwarp(imgFullLeft,RinLeft, affineTransform);
+RinRight = imref2d(size(imgFullRight));
+[C, RC] = imfuse(imgFullRight,RinRight,warpedLeft,Rout, 'blend');
 imshow(C, RC);
 pause;
 % oz = size(warpedRight);
