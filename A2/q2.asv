@@ -1,68 +1,11 @@
-%run('C:\Users\MHDante\Desktop\vlfeat-0.9.20\toolbox\vl_setup')
+
+% run('C:\Users\ZackLapt\Documents\MATLAB\vlfeat-0.9.20-bin\vlfeat-0.9.20\toolbox\vl_setup')
+% run('C:\Users\MHDante\Desktop\vlfeat-0.9.20\toolbox\vl_setup')
+
 imgFullLeft = imread('parliament-left.jpg');
 imgFullRight = imread('parliament-right.jpg');
-imgFullLeft = imresize(imfullLeft, 0.25);
-imgLeft = im2single(rgb2gray());
-imgRight = im2single(rgb2gray(imread('parliament-right.jpg')));
-%imshow(imgLeft);
-[fLeft, dLeft] = vl_sift(imgLeft) ;
-[fRight, dRight] = vl_sift(imgRight) ;
-[matches, scores] = vl_ubcmatch(dLeft, dRight,1.5) ;
-% matchpair = [matches;scores];
-% matchpair = sortrows(matchpair',-3)';
-% q = 300;
-% matchpair = matchpair(:,1:q);
-bestX = [];
-bestCount = 0;
-bestMatch = [];
-N= 300;
-for i= 1:N
-    pta = randi(q);
-    ptb = randi(q);
-    while ptb == pta 
-        ptb = randi(q);
-    end
-    ptc = randi(q);
-    while ptc == ptb || ptc == pta
-        ptc = randi(q);
-    end
-    [A,B] = CreateStack(matchpair, fLeft, fRight, [pta,ptb,ptc]);
-%     iA = inv(A);
-    X=A\B;
-    [Atest, Btest] = CreateStack(matchpair, fLeft, fRight, [1:q]);
-    BModel = Atest*X;
-    BDiff = (BModel-Btest).^2;
-    d =20^2;
-    count = 0;
-    for j = 1:2:q
-        s = BDiff(j) + BDiff(j+1);
-        if s <d
-            count = count+1;
-        end
-    end
-    
-    if count > bestCount
-        bestX = X;
-        bestCount = count;
-        bestMatch = matchpair(:,pta);
-    end
-end
+AffineMeldImages(imgFullLeft,imgFullRight,0.25.0.25, 0);
 
-I = [bestX(1),bestX(3),0;
-    bestX(2),bestX(4),0;
-    bestX(5),bestX(6),1];
-                    
-                    
-affineTransform = affine2d(I);
-
-% affineTransform = affine2d('affine', I);
-% [warpedRight, xdata, ydata] = imtransform(imgRight, affineTransform);
-RinLeft = imref2d(size(imgLeft));
-[warpedLeft, Rout] = imwarp(imgLeft,RinLeft, affineTransform);
-RinRight = imref2d(size(imgRight));
-[C, RC] = imfuse(imgRight,RinRight,warpedLeft,Rout, 'blend');
-imshow(C, RC);
-pause;
 % oz = size(warpedRight);
 % xdata = round(xdata);
 % ydata = round(ydata);
