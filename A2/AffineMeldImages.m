@@ -11,6 +11,7 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
     matchnum = size(matches,2);
     bestX = [];
     bestCount = 0;
+    bestInliers =[];
     [Atest, Btest] = CreateStack(matches, fLeft, fRight, 1:matchnum);
     for i= 1:N
         pta = randi(matchnum);
@@ -29,10 +30,12 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
         BModel = Atest*X;
         BDiff = (BModel-Btest).^2;
         count = 0;
-        for j = 1:2:matchnum
+        inlierIndices = [];
+        for j = 1:2:matchnum*2
             s = BDiff(j) + BDiff(j+1);
             if s <d
                 count = count+1;
+                inlierIndices = [inlierIndices ;((j-1)/2 +1)];
             end
         end
 
@@ -40,8 +43,12 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
             bestX = X;
             bestCount = count;
             bestMatch = matches(:,pta);
+            bestInliers = inlierIndices;
         end
     end
+    [AInliers, BInliers] = CreateStack(matches, fLeft, fRight, bestInliers');
+    iAInliers = pinv(AInliers);
+        bestX=iAInliers*BInliers;
         
     I = [bestX(1),bestX(3),0;
         bestX(2),bestX(4),0;
@@ -53,7 +60,7 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
         RightMask = ones(size(imgFullRight));
     [warpedLeftMask, ~] = imwarp(LeftMask,RinLeft, affineTransform);
     RinRight = imref2d(size(imgFullRight));
-    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'max', RightMask, warpedLeftMask);
+    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'custom', RightMask, warpedLeftMask);
     imshow(C, RC);
 end
 
