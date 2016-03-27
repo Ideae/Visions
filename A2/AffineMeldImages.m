@@ -1,4 +1,4 @@
-function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
+function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d, blendmode )
 
     imgFullLeft = imresize(image1, scale);
     imgFullRight = imresize(image2, scale);
@@ -60,7 +60,7 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
         RightMask = ones(size(imgFullRight));
     [warpedLeftMask, ~] = imwarp(LeftMask,RinLeft, affineTransform);
     RinRight = imref2d(size(imgFullRight));
-    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'custom', RightMask, warpedLeftMask);
+    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, blendmode, RightMask, warpedLeftMask);
     imshow(C, RC);
 end
 
