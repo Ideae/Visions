@@ -50,10 +50,9 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
     RinLeft = imref2d(size(imgFullLeft));
     [warpedLeft, Rout] = imwarp(imgFullLeft,RinLeft, affineTransform);
     LeftMask = ones(size(imgFullLeft));
-        RightMask = ones(size(imgFullRight));
     [warpedLeftMask, ~] = imwarp(LeftMask,RinLeft, affineTransform);
     RinRight = imref2d(size(imgFullRight));
-    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'custom', RightMask, warpedLeftMask);
+    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'max', LeftMask, RightMask);
     imshow(C, RC);
 end
 
