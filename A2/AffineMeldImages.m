@@ -42,7 +42,7 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
             bestMatch = matches(:,pta);
         end
     end
-
+        
     I = [bestX(1),bestX(3),0;
         bestX(2),bestX(4),0;
         bestX(5),bestX(6),1];
@@ -53,7 +53,7 @@ function [ meldedImage ] = AffineMeldImages( image1, image2, scale, N, d )
         RightMask = ones(size(imgFullRight));
     [warpedLeftMask, ~] = imwarp(LeftMask,RinLeft, affineTransform);
     RinRight = imref2d(size(imgFullRight));
-    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'custom', RightMask, warpedLeftMask);
+    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'max', RightMask, warpedLeftMask);
     imshow(C, RC);
 end
 

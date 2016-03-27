@@ -8,4 +8,4 @@ imgFullRight = imread('parliament-right.jpg');
 
 imgFullLeft2 = imread('Ryerson-left.jpg');
 imgFullRight2 = imread('Ryerson-right.jpg');
-HomographyMeldImages(imgFullLeft,imgFullRight,0.25, 40000, 0.00001);
+HomographyMeldImages(imgFullLeft2,imgFullRight2,0.25, 40000, 0.00001);

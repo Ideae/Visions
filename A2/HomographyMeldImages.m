@@ -54,8 +54,12 @@ function [ meldedImage ] = HomographyMeldImages( image1, image2, scale, N, d )
     homographyTransformation = projective2d(H);
     RinLeft = imref2d(size(imgFullLeft));
     [warpedLeft, Rout] = imwarp(imgFullLeft,RinLeft, homographyTransformation);
+    
+    LeftMask = ones(size(imgFullLeft));
+        RightMask = ones(size(imgFullRight));
+    [warpedLeftMask, ~] = imwarp(LeftMask,RinLeft, homographyTransformation);
     RinRight = imref2d(size(imgFullRight));
-    [C, RC] = imfuse(imgFullRight,RinRight,warpedLeft,Rout, 'blend');
+    [C, RC] = imfusecustom(imgFullRight,RinRight,warpedLeft,Rout, 'max', RightMask, warpedLeftMask);
     imshow(C, RC);
 end
 
