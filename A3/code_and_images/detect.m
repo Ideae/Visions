@@ -24,16 +24,12 @@ for i=1:nImages
     
     while true
         currentScale = currentScale * scaleFactor;
-        aim = imresize(origIm, currentScale);
+        im = imresize(origIm, currentScale);
         %         im = rgb2gray(imresize(origIm, currentScale));
-        [rs,cs,~] = size(aim);
+        [rs,cs,~] = size(im);
         if rs+cellSize < dim || cs+cellSize < dim
             break;
         end
-        for ii=1:cellSize
-            for jj=1:cellSize
-                [rr,cc, ~] = size(aim);
-                im = aim(ii:rr, jj:cc,:);
                 
                 % generate a grid of features across the entire image. you may want to
                 % try generating features more densely (i.e., not in a grid)
@@ -47,7 +43,10 @@ for i=1:nImages
                 for r=1:rows-(featSize-1)
                     for c=1:cols-(featSize-1)
                         featHere = feats(r:r+(featSize-1),c:c+(featSize-1),:);
-                        confs(r,c) = featHere(:)'*w + b;
+                        aa = featHere(:)'*w + b;
+                        featHere2 = featHere (:,end:-1:1,vl_hog('permutation'));
+                        bb = featHere2(:)'*w + b;
+                        confs(r,c) = min(aa, bb);
                     end
                 end
                 
@@ -60,15 +59,15 @@ for i=1:nImages
                 for n=1:numel(baseInds)
                     [row,col] = ind2sub([size(feats,1) size(feats,2)],baseInds(n));
                     currConf = confs(row,col);
-                    bbox = [ (col*cellSize + jj), ...
-                        (row*cellSize + ii), ...
-                        ((col+featSize-1)*cellSize  + jj), ...
-                        ((row+featSize-1)*cellSize + ii)]/currentScale;
+                    bbox = [ (col*cellSize), ...
+                        (row*cellSize), ...
+                        ((col+featSize-1)*cellSize), ...
+                        ((row+featSize-1)*cellSize)]/currentScale;
                     take = true;
                     intersect_inds = [];
                     for j = 1:numel(top_vals)
                         bbox2 = top_bbs(j,:);
-                        if checkOverlap(bbox,bbox2,0.5)
+                        if checkOverlap(bbox,bbox2,0.2)
                             if top_vals(j) < currConf
                                 
                                 intersect_inds = [intersect_inds;j];
@@ -85,7 +84,7 @@ for i=1:nImages
                             end
                         end
                     end
-                    if currConf < 0.4
+                    if currConf < 0.01
                         break;
                     end
                     if take
@@ -115,8 +114,6 @@ for i=1:nImages
                         %                 end
                     end
                 end
-            end
-        end
     end
     [~,top_inds] = sort(top_vals,'descend');
     
@@ -160,7 +157,7 @@ for i=1:nImages
 %          pause;
     fprintf('got preds for image %d/%d\n', i,nImages);
 end
-
+hold off;
 
 
 % evaluate

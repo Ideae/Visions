@@ -10,19 +10,21 @@ image_names = cell(0,1);
 cellSize = 4;
 dim = 36;
 featSize = dim/cellSize;
-scaleFactor = sqrt(0.5);
+scaleFactor = sqrt(sqrt(0.5));
 % load and show the image
-origIm = im2single(imread('class.jpg'));
+colorIm = im2single(imread('class.jpg'));
+origIm = rgb2gray(colorIm);
 %     imshow(im);
 %     hold on;
 
 currentScale = 1;
 top_bbs = [];
 top_vals = [];
-
+perm = vl_hog('permutation');
 while true
     currentScale = currentScale * scaleFactor;
-    im = imresize(origIm, currentScale);
+    im = imresize(origIm, currentScale,'lanczos3');
+%         im = adapthisteq(im);
     %         im = rgb2gray(imresize(origIm, currentScale));
     [rs,cs,~] = size(im);
     if rs+cellSize < dim || cs+cellSize < dim
@@ -32,21 +34,31 @@ while true
         % try generating features more densely (i.e., not in a grid)
         
         feats = vl_hog(im,cellSize);
-
+        feats2 = vl_hog(imadjust(im),cellSize);
+        feats3 = vl_hog(histeq(im),cellSize);
+        feats4 = vl_hog(adapthisteq(im),cellSize);
+        
+        passes = cat(4,feats , feats2, feats3,feats4);
+        [rows,cols,~] = size(feats);
+        confs = zeros(rows,cols);
+        
 %         imshow(vl_hog('render', feats));
 %         pause;
         % concatenate the features into 6x6 bins, and classify them (as if they
         % represent 36x36-pixel faces)
-        [rows,cols,~] = size(feats);
-        confs = zeros(rows,cols);
         
         for r=1:rows-(featSize-1)
             for c=1:cols-(featSize-1)
-                featHere = feats(r:r+(featSize-1),c:c+(featSize-1),:);
-                aa = featHere(:)'*w + b;
-                featHere2 = featHere (:,end:-1:1,vl_hog('permutation'));
-                bb = featHere2(:)'*w + b;
-                confs(r,c) = min(aa, bb);
+                cc = 0;
+                np =4;
+                for pp=1:np
+                    featHere = passes(r:r+(featSize-1),c:c+(featSize-1),:, pp);
+                    featHere2 = featHere (:,end:-1:1,perm, 1);
+                    aa = featHere(:)'*w + b;
+                    bb = featHere2(:)'*w + b;
+                    cc = cc + min(aa, bb);
+                end
+                confs(r,c) = (cc) / np;
             end
         end
         
@@ -57,7 +69,7 @@ while true
         inds = [];
         
         for n=1:numel(baseInds)
-            [row,col] = ind2sub([size(feats,1) size(feats,2)],baseInds(n));
+            [row,col] = ind2sub([size(confs,1) size(confs,2)],baseInds(n));
             currConf = confs(row,col);
             bbox = [ (col*cellSize), ...
                 (row*cellSize), ...
@@ -67,7 +79,7 @@ while true
             intersect_inds = [];
             for j = 1:numel(top_vals)
                 bbox2 = top_bbs(j,:);
-                if checkOverlap(bbox,bbox2,0.5)
+                if checkOverlap(bbox,bbox2,0.2)
                     if top_vals(j) < currConf
                         
                         intersect_inds = [intersect_inds;j];
@@ -84,7 +96,7 @@ while true
                     end
                 end
             end
-            if currConf < 1
+            if currConf < 0.1
                 break;
             end
             if take
@@ -119,7 +131,7 @@ end
 
 
 hold off;
-imshow(origIm);
+imshow(colorIm);
 hold on;
 for n=1:numel(top_inds)
     %         [row,col] = ind2sub([size(feats,1) size(feats,2)],inds(n));

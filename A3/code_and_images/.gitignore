@@ -4,4 +4,6 @@
 /test_images/
 /validationSetFaces/
 /validationSetNotFaces/
+/hardneg/
+/faces/
 	

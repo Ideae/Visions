@@ -17,6 +17,7 @@ featSize = 31*(imgsize/cellSize)^2;
 pos_feats_valid = zeros(pos_nImages_valid,featSize);
 for i=1:pos_nImages_valid
     im = im2single(imread(sprintf('%s/%s',pos_imageDir,pos_imageList(i).name)));
+        im = adapthisteq(im);
     feat = vl_hog(im,cellSize);
     pos_feats_valid(i,:) = feat(:);
     fprintf('got feat for pos image %d/%d\n',i,pos_nImages_valid);

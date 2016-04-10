@@ -25,8 +25,9 @@ npos = size(gt_ids,1); %total number of true positives.
 
 % sort detections by decreasing confidence
 [sc,si]=sort(-confidences);
+sc = -sc;
 image_ids=image_ids(si);
-bboxes   =bboxes(si,:);
+bboxes = bboxes(si,:);
 
 % assign detections to ground truth objects
 nd=length(confidences);
@@ -34,6 +35,7 @@ tp=zeros(nd,1);
 fp=zeros(nd,1);
 duplicate_detections = zeros(nd,1);
 tic;
+label = 1;
 for d=1:nd
     % display progress
     if toc>1
@@ -65,7 +67,7 @@ for d=1:nd
     end
     
     % assign detection as true positive/don't care/false positive
-    if ovmax >= 0.3
+    if ovmax >= 0.1
         if ~gt_isclaimed(jmax)
             tp(d)=1;            % true positive
             gt_isclaimed(jmax)=true;
@@ -75,6 +77,19 @@ for d=1:nd
         end
     else
         fp(d)=1;                    % false positive
+        if(sc(d)>0.3)
+            img = imread(strcat('test_images/', image_ids{d}));
+            img = padarray(img,[32 32],'post');
+            l = int32(bb(1));
+            r = int32(bb(3))-1;
+            b = int32(bb(2));
+            t = int32(bb(4))-1;
+            img = img(b:t,l:r,:);
+%             imshow(img);
+            img = imresize(img, [36,36]);
+            imwrite(img,strcat('hardneg\hn',num2str(label),'.jpg'));
+            label = label+1;
+        end
     end
 end
 
