@@ -11,10 +11,8 @@ cellSize = 4;
 dim = 36;
 featSize = dim/cellSize;
 scaleFactor = sqrt(0.5);
-
-for i=1:nImages
     % load and show the image
-    origIm = im2single(imread(sprintf('%s/%s',imageDir,imageList(i).name)));
+    origIm = im2single(imread('class.jpg'));
     %     imshow(im);
     %     hold on;
     
@@ -24,17 +22,12 @@ for i=1:nImages
     
     while true
         currentScale = currentScale * scaleFactor;
-        aim = imresize(origIm, currentScale);
+        im = imresize(origIm, currentScale);
         %         im = rgb2gray(imresize(origIm, currentScale));
-        [rs,cs,~] = size(aim);
+        [rs,cs,~] = size(im);
         if rs+cellSize < dim || cs+cellSize < dim
             break;
         end
-        for ii=1:cellSize
-            for jj=1:cellSize
-                [rr,cc, ~] = size(aim);
-                im = aim(ii:rr, jj:cc,:);
-                
                 % generate a grid of features across the entire image. you may want to
                 % try generating features more densely (i.e., not in a grid)
                 feats = vl_hog(im,cellSize);
@@ -60,10 +53,10 @@ for i=1:nImages
                 for n=1:numel(baseInds)
                     [row,col] = ind2sub([size(feats,1) size(feats,2)],baseInds(n));
                     currConf = confs(row,col);
-                    bbox = [ (col*cellSize + jj), ...
-                        (row*cellSize + ii), ...
-                        ((col+featSize-1)*cellSize  + jj), ...
-                        ((row+featSize-1)*cellSize + ii)]/currentScale;
+                    bbox = [ (col*cellSize), ...
+                        (row*cellSize), ...
+                        ((col+featSize-1)*cellSize), ...
+                        ((row+featSize-1)*cellSize)]/currentScale;
                     take = true;
                     intersect_inds = [];
                     for j = 1:numel(top_vals)
@@ -85,7 +78,7 @@ for i=1:nImages
                             end
                         end
                     end
-                    if currConf < 0.4
+                    if currConf < 1.2
                         break;
                     end
                     if take
@@ -159,11 +152,3 @@ for i=1:nImages
     
 %          pause;
     fprintf('got preds for image %d/%d\n', i,nImages);
-end
-
-
-
-% evaluate
-label_path = 'test_images_gt.txt';
-[gt_ids, gt_bboxes, gt_isclaimed, tp, fp, duplicate_detections] = ...
-    evaluate_detections_on_test(bboxes, confidences, image_names, label_path);
