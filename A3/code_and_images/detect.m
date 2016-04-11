@@ -84,7 +84,7 @@ for i=1:nImages
                             end
                         end
                     end
-                    if currConf < 0.01
+                    if currConf < 0.3
                         break;
                     end
                     if take
@@ -140,12 +140,12 @@ for i=1:nImages
         image_name = {imageList(i).name};
         clamp = min(1, max(0, conf/2));
         % plot
-        plot_rectangle = [bbox(1), bbox(2); ...
-            bbox(1), bbox(4); ...
-            bbox(3), bbox(4); ...
-            bbox(3), bbox(2); ...
-            bbox(1), bbox(2)];
-        plot(plot_rectangle(:,1), plot_rectangle(:,2),'Color', [1-clamp 0 clamp]);
+%         plot_rectangle = [bbox(1), bbox(2); ...
+%             bbox(1), bbox(4); ...
+%             bbox(3), bbox(4); ...
+%             bbox(3), bbox(2); ...
+%             bbox(1), bbox(2)];
+%         plot(plot_rectangle(:,1), plot_rectangle(:,2),'Color', [1-clamp 0 clamp]);
         
         % save
         %         conf
