@@ -11,9 +11,11 @@ im_dante = (im_dante *2) -1;
 [imh, imw] = size(im_zack);
 %They're the same size...
 
-widths = [17,19,21,25,27,31,41,51,71];
+% Uncomment for dank dacks
+% widths = [17,19,21,25,27,31,41,51,71];
+% widths = [11]; %for zante
+widths = [19]; %for dack
 
-% widths = [21];
 for i = 1:numel(widths)
 	width = widths(i)
 	sigma = (width - 1) / 6;

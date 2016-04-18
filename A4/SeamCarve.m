@@ -54,9 +54,9 @@ for newWidth = w-1:-1:c
         for x=1:w-1
             if x == currentIndex
                 summand = 1;
-%                 newImage(y,currentIndex,:) = (tempImg(y,currentIndex,:) + tempImg(y,currentIndex+1,:))./2;
-%             elseif x == currentIndex -1
-%                 newImage(y,currentIndex-1,:) = (tempImg(y,currentIndex,:) + tempImg(y,currentIndex-1,:))./2;
+                newImage(y,currentIndex,:) = (tempImg(y,currentIndex,:) + tempImg(y,currentIndex+1,:))./2;
+            elseif x == currentIndex -1
+                newImage(y,currentIndex-1,:) = (tempImg(y,currentIndex,:) + tempImg(y,currentIndex-1,:))./2;
             else
                 indx = x + summand;
                 newImage(y,x,:) = tempImg(y,indx,:);

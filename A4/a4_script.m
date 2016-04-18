@@ -1,6 +1,10 @@
-% q1();
-% pause;
-im = imread('ryerson.jpg');
-newImg = SeamCarve(im2double(im), 400);
-imshow(newImg, []);
-% colormap jet;
+fprintf('Running Q1\n');
+q1();
+pause;
+
+fprintf('Running Q2\n');
+q2();
+
+fprintf('Running Q3\n');
+q3();
+pause;

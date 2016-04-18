@@ -1,4 +1,4 @@
-im = imread('spat_freq.png');
+im = imread('a4_spat_freq.png');
 
 im = double(rgb2gray(im))/255;
 
